@@ -6,9 +6,18 @@ const props = defineProps<{
   employees: Employee[];
 }>();
 
+const emit = defineEmits<{
+  (e: "delete", email: string): void;
+}>();
+
 const employees = computed(() => {
   return props.employees;
 });
+
+const deleteEmployee = (email: string) => {
+  emit("delete", email);
+};
+
 </script>
 
 <template>
@@ -32,7 +41,8 @@ const employees = computed(() => {
           </v-container>
 
           <v-card-actions>
-            <v-btn>Click me</v-btn>
+            <v-btn color="secondary">Edit</v-btn>
+            <v-btn @click="deleteEmployee(employee.email)" color="error">Delete</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
