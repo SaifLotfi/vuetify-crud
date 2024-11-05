@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid">
+  <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
     <v-container>
       <v-row>
         <v-col cols="12" md="6">
@@ -32,7 +32,7 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="salary"
+            v-model.number="salary"
             :rules="salaryRules"
             label="Salary"
             required
@@ -43,84 +43,83 @@
     <v-container>
       <v-row justify="center">
         <v-col cols="auto">
-          <v-btn class="mt-2" type="submit" @click.prevent="submitForm" block>Submit</v-btn>
+          <v-btn class="mt-2" type="submit" @click.prevent="submitForm" block
+            >Submit</v-btn
+          >
         </v-col>
       </v-row>
     </v-container>
   </v-form>
 </template>
 
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, defineEmits } from "vue";
+
+const form = ref(null);
+
+const emit = defineEmits();
 
 // Define reactive state
 const valid = ref(false);
 const firstName = ref("");
 const lastName = ref("");
 const email = ref("");
-const salary = ref("");
+const salary = ref<number | null>(null);
 
 // Validation rules
 const nameRules = [
-  (value) => {
+  (value: string) => {
     if (value) return true;
     return "Name is required.";
   },
-  (value) => {
+  (value: string) => {
     if (value?.length <= 10) return true;
     return "Name must be less than 10 characters.";
   },
 ];
 
 const emailRules = [
-  (value) => {
+  (value: string) => {
     if (value) return true;
     return "E-mail is required.";
   },
-  (value) => {
+  (value: string) => {
     if (/.+@.+\..+/.test(value)) return true;
     return "E-mail must be valid.";
   },
 ];
 
 const salaryRules = [
-  (value) => {
+  (value: number) => {
     if (value) return true;
     return "Salary is required.";
   },
-  (value) => {
+  (value: number) => {
     if (value > 0) return true;
     return "Salary should be a number greater than zero.";
   },
-]
+];
 
-// Function to validate fields (optional)
-const validateFields = () => {
-  const nameErrors = nameRules
-    .map((rule) => rule(firstname.value))
-    .filter((error) => error !== true);
-  const emailErrors = emailRules
-    .map((rule) => rule(email.value))
-    .filter((error) => error !== true);
-  const salaryErrors = emailRules 
-    .map((rule) => rule(salary.value))
-    .filter((error) => error !== true);
-
-  return {
-    nameErrors,
-    emailErrors,
-    salaryErrors
-  };
+const resetForm = () => {
+  valid.value = false;
+  firstName.value = "";
+  lastName.value = "";
+  email.value = "";
+  salary.value = null;
 };
 
 const submitForm = () => {
+  if (!valid.value) return;
   const newEmployee = {
     firstName: firstName.value,
     lastName: lastName.value,
     email: email.value,
-    salary: salary.value
+    salary: salary.value,
   };
-  console.log(newEmployee);
+  emit("submit", newEmployee);
+  //@ts-expect-error
+  form.value?.reset();
+  resetForm();
 };
 
 // Export the reactive properties for template usage
