@@ -5,16 +5,29 @@
 
 <script lang="ts" setup>
 import { Employee } from "@/types/employee";
-import { ref } from "vue";
+import { useEmployeesStore } from "@/stores/EmployeesStore";
+import { useFormStore } from "@/stores/formStore";
+import { storeToRefs } from "pinia";
 
-const employees = ref<Employee[]>([]);
+const employeeStore = useEmployeesStore();
+const formStore = useFormStore();
+
+const { employees } = storeToRefs(employeeStore);
+const { isEdit } = storeToRefs(formStore);
 
 const addEmployee = (employee: Employee) => {
-  employees.value.push(employee);
+  if(isEdit.value){
+    console.log('in isEdit')
+    const index = employees.value.findIndex((e) => e.email === employee.email);
+    employees.value.splice(index, 1, employee);
+    isEdit.value = false;
+  }else {
+    console.log('in pushing normally')
+    employees.value.push(employee);
+  }
 };
 
 const deleteEmployee = (email: string) => {
   employees.value = employees.value.filter((e) => e.email !== email);
 };
-
 </script>

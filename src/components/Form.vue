@@ -1,3 +1,74 @@
+<script setup lang="ts">
+import { defineEmits } from "vue";
+import { useFormStore } from "../stores/formStore";
+import { storeToRefs } from "pinia";
+
+const emit = defineEmits();
+
+const store = useFormStore();
+
+const { firstName, lastName, email, salary, valid, form,isEdit } = storeToRefs(store);
+
+
+// Validation rules
+const nameRules = [
+  (value: string) => {
+    if (value) return true;
+    return "Name is required.";
+  },
+  (value: string) => {
+    if (value?.length <= 10) return true;
+    return "Name must be less than 10 characters.";
+  },
+];
+
+const emailRules = [
+  (value: string) => {
+    if (value) return true;
+    return "E-mail is required.";
+  },
+  (value: string) => {
+    if (/.+@.+\..+/.test(value)) return true;
+    return "E-mail must be valid.";
+  },
+];
+
+const salaryRules = [
+  (value: number) => {
+    if (value) return true;
+    return "Salary is required.";
+  },
+  (value: number) => {
+    if (value > 0) return true;
+    return "Salary should be a number greater than zero.";
+  },
+];
+
+const resetForm = () => {
+  valid.value = false;
+  firstName.value = "";
+  lastName.value = "";
+  email.value = "";
+  salary.value = null;
+};
+
+const submitForm = () => {
+  if (!valid.value) return;
+  const newEmployee = {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    email: email.value,
+    salary: salary.value,
+  };
+  console.log(isEdit.value)
+  emit("submit", newEmployee);
+  //@ts-expect-error
+  form.value?.reset();
+  resetForm();
+};
+
+// Export the reactive properties for template usage
+</script>
 <template>
   <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
     <v-container>
@@ -51,76 +122,3 @@
     </v-container>
   </v-form>
 </template>
-
-<script setup lang="ts">
-import { ref, defineEmits } from "vue";
-
-const form = ref(null);
-
-const emit = defineEmits();
-
-// Define reactive state
-const valid = ref(false);
-const firstName = ref("");
-const lastName = ref("");
-const email = ref("");
-const salary = ref<number | null>(null);
-
-// Validation rules
-const nameRules = [
-  (value: string) => {
-    if (value) return true;
-    return "Name is required.";
-  },
-  (value: string) => {
-    if (value?.length <= 10) return true;
-    return "Name must be less than 10 characters.";
-  },
-];
-
-const emailRules = [
-  (value: string) => {
-    if (value) return true;
-    return "E-mail is required.";
-  },
-  (value: string) => {
-    if (/.+@.+\..+/.test(value)) return true;
-    return "E-mail must be valid.";
-  },
-];
-
-const salaryRules = [
-  (value: number) => {
-    if (value) return true;
-    return "Salary is required.";
-  },
-  (value: number) => {
-    if (value > 0) return true;
-    return "Salary should be a number greater than zero.";
-  },
-];
-
-const resetForm = () => {
-  valid.value = false;
-  firstName.value = "";
-  lastName.value = "";
-  email.value = "";
-  salary.value = null;
-};
-
-const submitForm = () => {
-  if (!valid.value) return;
-  const newEmployee = {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    salary: salary.value,
-  };
-  emit("submit", newEmployee);
-  //@ts-expect-error
-  form.value?.reset();
-  resetForm();
-};
-
-// Export the reactive properties for template usage
-</script>

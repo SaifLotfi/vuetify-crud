@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Employee } from "@/types/employee";
+import { useFormStore } from "@/stores/formStore";
+import { storeToRefs } from "pinia";
+
+const store = useFormStore();
 
 const props = defineProps<{
   employees: Employee[];
@@ -18,6 +22,16 @@ const deleteEmployee = (email: string) => {
   emit("delete", email);
 };
 
+const editEmployee = (employee: Employee) => {
+  const { firstName, lastName, email, salary, valid,isEdit} =
+    storeToRefs(store);
+    firstName.value = employee.firstName;
+    lastName.value = employee.lastName;
+    email.value = employee.email;
+    salary.value = employee.salary;
+    valid.value = false;
+    isEdit.value = true;
+};
 </script>
 
 <template>
@@ -41,8 +55,12 @@ const deleteEmployee = (email: string) => {
           </v-container>
 
           <v-card-actions>
-            <v-btn color="secondary">Edit</v-btn>
-            <v-btn @click="deleteEmployee(employee.email)" color="error">Delete</v-btn>
+            <v-btn @click="editEmployee(employee)" color="secondary"
+              >Edit</v-btn
+            >
+            <v-btn @click="deleteEmployee(employee.email)" color="error"
+              >Delete</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>
