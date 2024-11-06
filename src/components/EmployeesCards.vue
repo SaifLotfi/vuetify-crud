@@ -11,15 +11,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "delete", email: string): void;
+  (e: "delete", id: number): void;
 }>();
 
 const employees = computed(() => {
   return props.employees;
 });
 
-const deleteEmployee = (email: string) => {
-  emit("delete", email);
+const deleteEmployee = (id: number) => {
+  emit("delete", id);
 };
 
 const editEmployee = (employee: Employee) => {
@@ -58,7 +58,7 @@ const editEmployee = (employee: Employee) => {
             <v-btn @click="editEmployee(employee)" color="secondary"
               >Edit</v-btn
             >
-            <v-btn @click="deleteEmployee(employee.email)" color="error"
+            <v-btn @click="deleteEmployee(employee.id)" color="error"
               >Delete</v-btn
             >
           </v-card-actions>
