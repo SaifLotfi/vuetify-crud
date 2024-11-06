@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Employee } from "@/types/employee";
 import { useFormStore } from "../stores/formStore";
 import { storeToRefs } from "pinia";
 
