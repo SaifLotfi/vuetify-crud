@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Employee } from "@/types/employee";
 import { useFormStore } from "../stores/formStore";
 import { storeToRefs } from "pinia";
 
@@ -6,8 +7,8 @@ const emit = defineEmits();
 
 const store = useFormStore();
 
-const { firstName, lastName, email, salary, valid, form,isEdit } = storeToRefs(store);
-
+const { firstName, lastName, email, salary, valid, form, isEdit } =
+  storeToRefs(store);
 
 // Validation rules
 const nameRules = [
@@ -53,13 +54,15 @@ const resetForm = () => {
 
 const submitForm = () => {
   if (!valid.value) return;
-  const newEmployee = {
+  let newEmployee = {
+    id:store.isEdit ? store.id : null,
     firstName: firstName.value,
     lastName: lastName.value,
     email: email.value,
     salary: salary.value,
   };
-  console.log(isEdit.value)
+
+  console.log(isEdit.value);
   emit("submit", newEmployee);
   //@ts-expect-error
   form.value?.reset();

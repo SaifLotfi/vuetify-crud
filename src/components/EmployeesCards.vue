@@ -23,14 +23,15 @@ const deleteEmployee = (id: number) => {
 };
 
 const editEmployee = (employee: Employee) => {
-  const { firstName, lastName, email, salary, valid,isEdit} =
+  const { firstName, lastName, email, salary, valid, isEdit, id } =
     storeToRefs(store);
-    firstName.value = employee.firstName;
-    lastName.value = employee.lastName;
-    email.value = employee.email;
-    salary.value = employee.salary;
-    valid.value = false;
-    isEdit.value = true;
+  id.value = employee.id;
+  firstName.value = employee.firstName;
+  lastName.value = employee.lastName;
+  email.value = employee.email;
+  salary.value = employee.salary;
+  valid.value = false;
+  isEdit.value = true;
 };
 </script>
 

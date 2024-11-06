@@ -18,8 +18,11 @@ const { isEdit } = storeToRefs(formStore);
 
 const addEmployee = (employee: Employee) => {
   if (isEdit.value) {
+    axios.put(`http://localhost:5000/employees/${employee.id}`, {
+      ...employee,
+    });
     const index = employees.value.findIndex(
-      (e: Employee) => e.email === employee.email
+      (e: Employee) => e.id === employee.id
     );
     employees.value.splice(index, 1, employee);
     isEdit.value = false;
